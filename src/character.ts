@@ -121,7 +121,7 @@ export const crawl = (character: Character): boolean => {
     // check for fake turn
     if (currentChar === PathChar.INTERSECTION) {
       // look in front of character to check if
-      // there is a path continuation event if we re on intersection
+      // there is a path continuation even if we re on intersection
       const lookupChar = getCharByXY(
         character.map,
         sumCoordinates(
