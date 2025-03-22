@@ -30,8 +30,8 @@ export const createCharacter = (map: PathFinderMap): Character => {
  * @param direction - direction to check
  * @returns boolean - true if character can move in direction, false otherwise
  */
-const makesSenseMove = (
-  char: PathChar,
+export const makesSenseMove = (
+  char: PathChar | string,
   direction: PathFinderDirection
 ): boolean => {
   if (char === PathChar.END) return true;
@@ -50,11 +50,14 @@ const makesSenseMove = (
  * @param character - character to crawl
  * @returns boolean - true if character has found a next position, false otherwise (throws error)
  */
-const crawl = (character: Character): boolean => {
+export const crawl = (character: Character): boolean => {
   let knowWhereToGo = false;
 
   const currentPlayerCoordinates = character.coordinates;
-  const currentChar = getCharByXY(character.map, currentPlayerCoordinates);
+  const currentChar = getCharByXY(
+    character.map,
+    currentPlayerCoordinates
+  ) as PathChar;
 
   // validate current char
   if (
@@ -89,7 +92,9 @@ const crawl = (character: Character): boolean => {
     if (checkHistory.length === 1) character.bucket.push(currentChar);
   }
 
-  // Character is on the path
+  /**
+   * Character is on the path
+   */
   if (
     [PathChar.HORIZONTAL, PathChar.VERTICAL].includes(currentChar) ||
     PICKUP_REGEX.test(currentChar)
@@ -106,13 +111,17 @@ const crawl = (character: Character): boolean => {
     }
   }
 
-  // Character determines the direction to move
+  /**
+   * Character is looking for a new direction
+   */
   if (
     [PathChar.START, PathChar.INTERSECTION].includes(currentChar) ||
     PICKUP_REGEX.test(currentChar)
   ) {
     // check for fake turn
     if (currentChar === PathChar.INTERSECTION) {
+      // look in front of character to check if
+      // there is a path continuation event if we re on intersection
       const lookupChar = getCharByXY(
         character.map,
         sumCoordinates(
@@ -124,6 +133,7 @@ const crawl = (character: Character): boolean => {
         throw new Error("Fake turn");
     }
 
+    // posible next move positions (chars)
     const posibleNextPositions = [];
 
     [

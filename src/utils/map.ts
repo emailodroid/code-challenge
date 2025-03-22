@@ -26,10 +26,10 @@ export const loadMap = async (src: string): Promise<PathFinderMap> => {
 export const getCharByXY = (
   map: PathFinderMap,
   coordinates: number[]
-): PathChar => {
+): PathChar | string => {
   const [x, y] = coordinates;
   if (x === undefined || y === undefined) return PathChar.EMPTY;
-  if (!!map[y]) return map[y][x] as PathChar;
+  if (!!map[y] && map[y][x]) return map[y][x];
   return PathChar.EMPTY;
 };
 
