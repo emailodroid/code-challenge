@@ -1,4 +1,9 @@
-import { characterDirections, oppositeDirections, pickupRegex } from "./conf";
+import {
+  CHARACTER_DIRECTIONS,
+  OPPOSITE_DIRECTIONS,
+  PICKUP_REGEX,
+  POSIBLE_MAP_CHARS,
+} from "./conf";
 import { PathChar, type PathFinderMap } from "./model/map";
 import { PathFinderDirection, type Character } from "./model/character";
 import { findStartPosition, getCharByXY, sumCoordinates } from "./utils/map";
@@ -29,6 +34,8 @@ const makesSenseMove = (
   char: PathChar,
   direction: PathFinderDirection
 ): boolean => {
+  if (char === PathChar.END) return true;
+
   if ([PathFinderDirection.UP, PathFinderDirection.DOWN].includes(direction))
     return char === PathChar.VERTICAL || char === PathChar.INTERSECTION;
 
@@ -49,6 +56,14 @@ const crawl = (character: Character): boolean => {
   const currentPlayerCoordinates = character.coordinates;
   const currentChar = getCharByXY(character.map, currentPlayerCoordinates);
 
+  // validate current char
+  if (
+    !POSIBLE_MAP_CHARS.includes(currentChar) &&
+    !PICKUP_REGEX.test(currentChar)
+  ) {
+    throw new Error("unsupported char");
+  }
+
   // save character to crawl history 📝
   character.crawlHistory.push(currentPlayerCoordinates);
 
@@ -57,11 +72,12 @@ const crawl = (character: Character): boolean => {
 
   if (PathChar.END === currentChar) return false;
 
-  if (PathChar.EMPTY === currentChar) throw new Error("Broken path");
+  // if (PathChar.EMPTY === currentChar || !currentChar)
+  //   throw new Error("Missing end character");
 
   // pickup current 🍎 (char) to bucket
   // check if char already picked up
-  if (pickupRegex.test(currentChar)) {
+  if (PICKUP_REGEX.test(currentChar)) {
     const checkHistory = character.crawlHistory.filter((historyLog) => {
       return (
         historyLog[0] === currentPlayerCoordinates[0] &&
@@ -76,20 +92,40 @@ const crawl = (character: Character): boolean => {
   // Character is on the path
   if (
     [PathChar.HORIZONTAL, PathChar.VERTICAL].includes(currentChar) ||
-    pickupRegex.test(currentChar)
+    PICKUP_REGEX.test(currentChar)
   ) {
-    const seekNextPosition = sumCoordinates(
+    const nextPosition = sumCoordinates(
       character.coordinates,
-      characterDirections[character.direction]
+      CHARACTER_DIRECTIONS[character.direction]
     );
-    const lookupChar = getCharByXY(character.map, seekNextPosition);
-
-    character.coordinates = seekNextPosition;
-    knowWhereToGo = true;
+    const lookupChar = getCharByXY(character.map, nextPosition);
+    if (lookupChar !== PathChar.EMPTY) {
+      // move character to next position
+      character.coordinates = nextPosition;
+      knowWhereToGo = true;
+    }
   }
 
   // Character determines the direction to move
-  if ([PathChar.START, PathChar.INTERSECTION].includes(currentChar)) {
+  if (
+    [PathChar.START, PathChar.INTERSECTION].includes(currentChar) ||
+    PICKUP_REGEX.test(currentChar)
+  ) {
+    // check for fake turn
+    if (currentChar === PathChar.INTERSECTION) {
+      const lookupChar = getCharByXY(
+        character.map,
+        sumCoordinates(
+          character.coordinates,
+          CHARACTER_DIRECTIONS[character.direction]
+        )
+      );
+      if (makesSenseMove(lookupChar, character.direction))
+        throw new Error("Fake turn");
+    }
+
+    const posibleNextPositions = [];
+
     [
       PathFinderDirection.UP,
       PathFinderDirection.RIGHT,
@@ -101,31 +137,44 @@ const crawl = (character: Character): boolean => {
         if (currentChar === PathChar.START) return true;
 
         // At INTERSECTION, don't allow going back the way we came
-        return dir !== oppositeDirections[character.direction];
+        return dir !== OPPOSITE_DIRECTIONS[character.direction];
       })
       .forEach((direction) => {
-        const seekNextPosition = sumCoordinates(
+        const nextPosition = sumCoordinates(
           currentPlayerCoordinates,
-          characterDirections[direction]
+          CHARACTER_DIRECTIONS[direction]
         );
 
-        const lookupChar = getCharByXY(character.map, seekNextPosition);
+        const lookupChar = getCharByXY(character.map, nextPosition);
 
-        if (makesSenseMove(lookupChar, direction)) {
+        if (
+          makesSenseMove(lookupChar, direction) ||
+          PICKUP_REGEX.test(lookupChar)
+        ) {
+          // if already know where to go, throw error
+          posibleNextPositions.push(lookupChar);
+
           if (!knowWhereToGo) {
+            // move character to next posible position
             character.direction = direction;
-            character.coordinates = seekNextPosition;
+            character.coordinates = nextPosition;
             knowWhereToGo = true;
           }
         }
       });
-  }
 
+    // if you are on intersection or start and have more than one posible next positions, throw error
+    if (posibleNextPositions.length > 1) {
+      if (currentChar === PathChar.INTERSECTION) throw new Error("Forke path");
+      if (currentChar === PathChar.START) throw new Error("Multiple starts");
+    }
+  }
+  if (!knowWhereToGo) throw new Error("Broken path");
   return knowWhereToGo;
 };
 
 /**
- * Pathfinder heartbeat ❤️
+ * Character heartbeat ❤️
  * Crawls the map and updates the character properties
  * @param character - character to crawl
  */

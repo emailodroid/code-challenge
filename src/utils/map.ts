@@ -50,7 +50,7 @@ export const sumCoordinates = (a: Coordinates, b: Coordinates): Coordinates => {
  * (basic map validation is done here but it made me more sense to do path validation in crawl function... while drawing trail)
  * @param map - 2D array of characters representing the map
  * @returns CharacterCoordinates {x, y} - starting position of the map
- * @throws Error if no starting position is found
+ * @throws Error if no starting/end position is found
  */
 export const findStartPosition = (map: PathFinderMap): Coordinates => {
   // find all starting positions
@@ -61,14 +61,16 @@ export const findStartPosition = (map: PathFinderMap): Coordinates => {
     }, acc);
   }, [] as Coordinates[]);
 
+  const hasEndPosition = map.some((row) => row.includes(PathChar.END));
+  if (!hasEndPosition) throw new Error("Missing end character");
+
   // if more than one starting position found, throw error
-  if (startingPositions.length > 1)
-    throw new Error("More than one starting position found");
+  if (startingPositions.length > 1) throw new Error("Multiple starts");
 
   // get the first starting position
   const startingPosition = startingPositions[0];
   if (startingPosition) return startingPosition;
 
   // if no starting position found, throw error
-  throw new Error("No starting position found");
+  throw new Error("Missing start character");
 };

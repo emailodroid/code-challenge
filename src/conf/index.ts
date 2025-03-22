@@ -1,10 +1,10 @@
 import { PathFinderDirection } from "../model/character";
-import type { Coordinates } from "../model/map";
+import { PathChar, type Coordinates } from "../model/map";
 
 /**
  * All posible character moves
  */
-export const characterDirections: Record<PathFinderDirection, Coordinates> = {
+export const CHARACTER_DIRECTIONS: Record<PathFinderDirection, Coordinates> = {
   [PathFinderDirection.UP]: [0, -1],
   [PathFinderDirection.DOWN]: [0, 1],
   [PathFinderDirection.LEFT]: [-1, 0],
@@ -15,7 +15,7 @@ export const characterDirections: Record<PathFinderDirection, Coordinates> = {
 /**
  * Opposite directions cuz...
  */
-export const oppositeDirections = {
+export const OPPOSITE_DIRECTIONS = {
   [PathFinderDirection.UP]: PathFinderDirection.DOWN,
   [PathFinderDirection.DOWN]: PathFinderDirection.UP,
   [PathFinderDirection.LEFT]: PathFinderDirection.RIGHT,
@@ -26,4 +26,15 @@ export const oppositeDirections = {
 /**
  * Regex to check if a character whant to pick up a char
  */
-export const pickupRegex = /[A-Z]/;
+export const PICKUP_REGEX = /[A-Z]/;
+
+/**
+ * Posible map chars
+ */
+export const POSIBLE_MAP_CHARS = [
+  PathChar.START,
+  PathChar.INTERSECTION,
+  PathChar.HORIZONTAL,
+  PathChar.VERTICAL,
+  PathChar.END,
+];
