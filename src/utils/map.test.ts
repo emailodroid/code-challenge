@@ -10,6 +10,15 @@ describe("Map Utils", async () => {
     expect(Array.isArray(map[0])).toBe(true);
   });
 
+  test("loadMap fails to load map file correctly", async () => {
+    expect(async () => {
+      return await loadMap("./data/unsupported.exe");
+    }).toThrowError("Error reading map file: ./data/unsupported.exe");
+    expect(async () => {
+      return await loadMap("./utils/map.ts");
+    }).toThrowError("Error reading map file: ./utils/map.ts");
+  });
+
   test("getCharByXY returns correct character", async () => {
     expect(getCharByXY(mapMock, [999, 999])).toBe(PathChar.EMPTY);
     expect(getCharByXY(mapMock, [0, 0])).toBe(PathChar.EMPTY);
@@ -29,10 +38,10 @@ describe("Map Utils", async () => {
     test("finds correct start position", () => {
       const mapMock = [
         [" ", " ", " "],
-        ["@", "-", "x"],
+        [" ", "@", "x"],
         [" ", " ", " "],
       ] as PathFinderMap;
-      expect(findStartPosition(mapMock)).toEqual([0, 1]);
+      expect(findStartPosition(mapMock)).toEqual([1, 1]);
     });
 
     test("throws error when no start character", () => {

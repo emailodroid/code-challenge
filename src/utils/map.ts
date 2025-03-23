@@ -12,8 +12,7 @@ export const loadMap = async (src: string): Promise<PathFinderMap> => {
     const mapArray = map.split("\n").map((row) => row.split(""));
     return mapArray as PathFinderMap;
   } catch (error) {
-    console.error(`Error reading map file: ${src}`);
-    process.exit(1);
+    throw new Error(`Error reading map file: ${src}`);
   }
 };
 

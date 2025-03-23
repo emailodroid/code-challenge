@@ -64,7 +64,7 @@ export const crawl = (character: Character): boolean => {
     !POSIBLE_MAP_CHARS.includes(currentChar) &&
     !PICKUP_REGEX.test(currentChar)
   ) {
-    throw new Error("unsupported char");
+    throw new Error("Unsupported char");
   }
 
   // save character to crawl history 📝
@@ -180,6 +180,7 @@ export const crawl = (character: Character): boolean => {
     }
   }
   if (!knowWhereToGo) throw new Error("Broken path");
+
   return knowWhereToGo;
 };
 
