@@ -16,3 +16,5 @@ for (const MAP_SRC of MAPS) {
   console.log(`\n\n 🗺️ \x1b[33m ${MAP_SRC} \x1b[0m \n`);
   pathFinder(map);
 }
+
+process.exit(0);

@@ -1,3 +1,15 @@
+## How to run
+
+Install [Bun](https://bun.sh/)
+
+```bash
+//  start
+bun start
+
+//  run tests
+bun test
+```
+
 # [Software Sauna](https://www.softwaresauna.com/) Code Challenge
 
 Follow a path of characters & collect letters:
@@ -49,9 +61,10 @@ At Software Sauna automated tests are a first-class citizen. This is why we enco
       +---+
 ```
 
-Expected result: 
-- Letters ```ACB```
-- Path as characters ```@---A---+|C|+---+|+-B-x```
+Expected result:
+
+- Letters `ACB`
+- Path as characters `@---A---+|C|+---+|+-B-x`
 
 #### Go straight through intersections
 
@@ -65,9 +78,10 @@ Expected result:
     +---D--+
 ```
 
-Expected result: 
-- Letters ```ABCD```
-- Path as characters ```@|A+---B--+|+--C-+|-||+---D--+|x```
+Expected result:
+
+- Letters `ABCD`
+- Path as characters `@|A+---B--+|+--C-+|-||+---D--+|x`
 
 #### Letters may be found on turns
 
@@ -79,9 +93,10 @@ Expected result:
       +---C
 ```
 
-Expected result: 
-- Letters ```ACB```
-- Path as characters ```@---A---+|||C---+|+-B-x```
+Expected result:
+
+- Letters `ACB`
+- Path as characters `@---A---+|||C---+|+-B-x`
 
 #### Do not collect a letter from the same location twice
 
@@ -96,9 +111,10 @@ Expected result:
              x
 ```
 
-Expected result: 
-- Letters ```GOONIES```
-- Path as characters ```@-G-O-+|+-+|O||+-O-N-+|I|+-+|+-I-+|ES|x```
+Expected result:
+
+- Letters `GOONIES`
+- Path as characters `@-G-O-+|+-+|O||+-O-N-+|I|+-+|+-I-+|ES|x`
 
 #### Keep direction, even in a compact space
 
@@ -109,9 +125,10 @@ Expected result:
  ++    x
 ```
 
-Expected result: 
-- Letters ```BLAH```
-- Path as characters ```@B+++B|+-L-+A+++A-+Hx```
+Expected result:
+
+- Letters `BLAH`
+- Path as characters `@B+++B|+-L-+A+++A-+Hx`
 
 #### Ignore stuff after end of path
 
@@ -121,9 +138,10 @@ Expected result:
        +-B--x-C--D
 ```
 
-Expected result: 
-- Letters ```AB```
-- Path as characters ```@-A--+|+-B--x```
+Expected result:
+
+- Letters `AB`
+- Path as characters `@-A--+|+-B--x`
 
 ### Invalid maps
 
@@ -198,7 +216,7 @@ Expected result: Error
 ```
    @--A-+
         |
-         
+
         B-x
 ```
 
@@ -219,7 +237,6 @@ Expected result: Error
 ```
 
 Expected result: Error
-
 
 ## Notes
 
